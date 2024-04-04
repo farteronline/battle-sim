@@ -3,6 +3,7 @@ let vectors = import("./vector-stuff.js");
 let maps = import("./map.js");
 let sol = import("./sol.js");
 let playermob = import("./player.js");
+let tc = import("./tickCounter.js");
 
 
 const colors = ["#FF0000", "#00A08A", "#F2AD00", "#F98400", "#5BBCD6"];
@@ -47,6 +48,14 @@ class Scene {
 	this.drawables = [];
 
 	this.smoothIt();
+    }
+
+    get canvasWidth() {
+	return this.tilesize * this.width;
+    }
+
+    get canvasHeight() {
+	return this.tilesize * this.height;
     }
 
     hitbox(position) {
@@ -97,6 +106,7 @@ class Scene {
 	ctx.imageSmoothingEnabled = smooth;
 	ctx.mozImageSmoothingEnabled = smooth;
 	ctx.webkitImageSmoothingEnabled = smooth;
+	ctx.font = "20px serif";
     }
 
     drawAll(){
@@ -135,17 +145,20 @@ function blockMapRect(map, x,y,w,h) {
     }
 }
 
+let tickCounter = null;
 async function main() {
     randoms = (await randoms);
     vectors = await window.vectors;
     maps = await maps;
     sol = await sol;
     playermob = await playermob;
+    tc = await tc;
 
     imagestore = new ImageStore(imgNames);
     await imagestore.load();
     map = new maps.Map(21, 21);
     scene = new Scene(map, 21, 21, 32, "./assets/map.png", "canvas");
+    tickCounter = new tc.TickCounter(7, "white","#479aed");
 
     map.scene = scene;
 
@@ -169,6 +182,7 @@ async function main() {
     
     scene.addDrawable(solMob);
     scene.addDrawable(playerMob);
+    scene.addDrawable(tickCounter);
 
     
     scene.drawAll();
@@ -181,6 +195,7 @@ async function main() {
 
 function mainLoop(){
 
+    tickCounter.tick();
     const monsters = [solMob];
     let stillGoing = false;
     player.nextTurn(map);
