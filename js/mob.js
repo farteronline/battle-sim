@@ -384,7 +384,7 @@ export class Mob {
 	const td = this.targetDirection(target);
 	const delta = vectors.subVec(target.position, this.position);
 
-	console.log(delta);
+	//console.log(delta);
 
 
 	// stop once at mob border

@@ -161,7 +161,6 @@ async function main() {
     solMob = new sol.SolMob([8,8]);
     const playerMob = new playermob.PlayerMob([10,15]);
 
-    const t = playerMob.position;
     player = playerMob;
     solMob.target = playerMob;
 
@@ -184,9 +183,9 @@ function mainLoop(){
 
     const monsters = [solMob];
     let stillGoing = false;
+    player.nextTurn(map);
+
     const didMove = monsters.map(x=>x.nextTurn(map));
-    player.nextTurn(map);
-    player.nextTurn(map);
     const didMoveAny = didMove.indexOf(true) != -1;
     stillGoing = stillGoing || didMoveAny;
 
