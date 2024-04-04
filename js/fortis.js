@@ -159,7 +159,7 @@ async function main() {
     map.setBlocking(17,17, maps.BLOCK_WALL);
 
     solMob = new sol.SolMob([8,8]);
-    const playerMob = new playermob.PlayerMob([10,15]);
+    const playerMob = new playermob.PlayerMob([10,10]);
 
     player = playerMob;
     solMob.target = playerMob;
