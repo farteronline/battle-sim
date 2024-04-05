@@ -60,3 +60,7 @@ export function randomWeighted(set) {
 export function pickRand(array){
     return array[(Math.random()*array.length)|0];
 }
+
+export function pickRandIndex(array){
+    return (Math.random()*array.length)|0;
+}

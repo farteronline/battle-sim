@@ -179,6 +179,8 @@ async function main() {
 
     player.block(map);
     solMob.block(map);
+
+    solMob.initMap(map);
     
     scene.addDrawable(solMob);
     scene.addDrawable(playerMob);

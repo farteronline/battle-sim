@@ -8,6 +8,7 @@ import * as spear1 from "./attacks/spear1.js";
 import * as spear2 from "./attacks/spear2.js";
 import * as parry from "./attacks/parry.js";
 import {PhaseTransition} from "./attacks/phaseTransition.js";
+import {BLOCK_WALL,BLOCK_FREE,BLOCK_MOB} from "./map.js";
 
 var SPECIAL_FREQUENCY = 0.1;
 var SPECIAL_HP_LIMIT = 1350;
@@ -61,12 +62,40 @@ export class SolMob extends Mob {
 	return 0;
     }
 
+    initMap(map) {
+	this.tileMap = {};
+	this.spawnedTiles = [];
+	this.spawnableTiles = map.blocking.map((t,i)=>{
+	    const x = i % map.width;
+	    const y = Math.floor(i / map.width);
+	    if(t != BLOCK_WALL) {
+		return [x, y];
+	    }
+	    return null;
+	}).filter(x=>x!=null);
+    }
+
 
     get center() {
 	return [this.position[0] + 2, this.position[1] - 2];
     }
 
+    tileIndex(tile) {
+	return `${tile[0]},${tile[1]}`;
+    }
+
+    isInBadTile(tile) {
+	return tile != null && !!this.tileMap[this.tileIndex(tile)];
+    }
+
+    spawnTile(tile) {
+	this.tileMap[this.tileIndex(tile)] = true;
+	this.spawnedTiles.push(tile);
+    }
     nextTurn(map) {
+	if (this.isInBadTile(this.target.position)) {
+	    this.target.damage(Math.floor(Math.random() * 11));
+	}
 	if (this.currentStats.hitpoint <= 0) {
 	    return;
 	}
@@ -100,10 +129,11 @@ export class SolMob extends Mob {
 	if(this.attack && this.attack.draw) {
 	    this.attack.draw(scene, this);
 	}
+	const ctx = scene.ctx;
+	const fillColor = ctx.fillStyle;
+
 	if(this.label) {
 	    const center = vectors.mulVec(this.center, scene.tilesize);
-	    const ctx = scene.ctx;
-	    const fillColor = ctx.fillStyle;
 	    const strokeColor = ctx.strokeStyle;
 	    const lineWidth = ctx.lineWidth;
 	    ctx.fillStyle = "yellow";
@@ -111,36 +141,40 @@ export class SolMob extends Mob {
 	    ctx.lineWidth = 3;
 	    scene.ctx.strokeText(this.label, center[0], center[1]);
 	    scene.ctx.fillText(this.label, center[0], center[1]);
-	    ctx.fillStyle = fillColor;
 	    ctx.strokeStyle = strokeColor;
 	    ctx.lineWidth = lineWidth;
 	}
+
+	ctx.fillStyle = "orange";
+	this.spawnedTiles.map(tile=>scene.drawTile(tile[0], tile[1]));
+	ctx.fillStyle = fillColor;
     }
 
     getNextTransitionPhase() {
 	const hp = this.lastPhaseHp;
+	const sol = this;
 	if (hp > 1100) {
 	    this.phase = 2;
-	    return new PhaseTransition("Phase 2");
+	    return new PhaseTransition("Phase 2", sol);
 	}
 	if (hp > 750) {
 	    this.phase = 3;
-	    return new PhaseTransition("Phase 3");
+	    return new PhaseTransition("Phase 3", sol);
 	}
 	if (hp > 400) {
 	    this.phase = 4;
-	    return new PhaseTransition("Phase 4");
+	    return new PhaseTransition("Phase 4", sol);
 	}
 	if (hp > 150) {
 	    this.phase = 5;
-	    return new PhaseTransition("Phase 5");
+	    return new PhaseTransition("Phase 5", sol);
 	}
 	if (hp > 0) {
-	    this.phase = 5;
-	    return new PhaseTransition("Enrage");
+	    this.phase = 6;
+	    return new PhaseTransition("Enrage", sol);
 	}
-	this.phase = 6;
-	return new PhaseTransition("Surprise, volatility");
+	this.phase = 7;
+	return new PhaseTransition("Surprise, volatility", sol);
     }
 
     get nextAttack() {
