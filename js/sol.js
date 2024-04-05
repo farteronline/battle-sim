@@ -19,6 +19,15 @@ export class SolMob extends Mob {
 	this.showAttackPattern = false;
 	this.label = null;
 	this.stunned = 2;
+	this.stats = {
+	    attack: 99,
+	    strength: 99,
+	    defence: 99,
+	    range: 99,
+	    magic: 99,
+	    hitpoint: 1500
+	};
+	this.currentStats = {...this.stats};
     }
 
 

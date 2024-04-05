@@ -212,7 +212,39 @@ export class Mob {
 			    this.size * scene.tilesize,
 			    this.size * scene.tilesize);
 	}
-	
+
+
+	this.drawDamage(scene);
+	this.damageTaken = null;
+    }
+
+    drawDamage(scene) {
+	scene.ctx.drawImage(this.image,
+			    (this.position[0]) * scene.tilesize,
+			    (this.position[1]-this.size+1) * scene.tilesize,
+			    this.size * scene.tilesize,
+			    this.size * scene.tilesize);
+	if(this.damageTaken != null) {
+	    const position = [this.position[0] + this.size/2 - 0.5, this.position[1] + 1];
+	    
+	    const center = vectors.mulVec(position, scene.tilesize);
+	    const ctx = scene.ctx;
+	    const fillColor = ctx.fillStyle;
+	    const strokeColor = ctx.strokeStyle;
+	    const lineWidth = ctx.lineWidth;
+	    ctx.fillStyle = "white";
+	    if (this.damageTaken == 0) {
+		ctx.strokeStyle = "blue";
+	    } else {
+		ctx.strokeStyle = "red";
+	    }
+	    ctx.lineWidth = 9;
+	    scene.ctx.strokeText(this.damageTaken, center[0], center[1]);
+	    scene.ctx.fillText(this.damageTaken, center[0], center[1]);
+	    ctx.fillStyle = fillColor;
+	    ctx.strokeStyle = strokeColor;
+	    ctx.lineWidth = lineWidth;
+	}
 
     }
 
@@ -357,6 +389,11 @@ export class Mob {
     }
 
     damage(amount) {
+	if (this.damageTaken) {
+	    this.damageTaken += amount;
+	} else {
+	    this.damageTaken = amount;
+	}
 	if(!(this.currentStats.hitpoint > 0)) {
 	    return;
 	}

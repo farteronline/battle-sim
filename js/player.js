@@ -3,6 +3,9 @@ import {UnitTypes} from "./Units.js";
 import * as vectors from "./vector-stuff.js";
 import {clamp} from "./vector-stuff.js";
 
+var WEAPON_COOLDOWN = 4;
+var WEAPON_MAX = 49;
+var WEAPON_ACCURACY = 0.7728;
 
 export class PlayerMob extends Mob {
 
@@ -16,13 +19,33 @@ export class PlayerMob extends Mob {
     setStats () {
 	super.setStats();
 	this.running = true;
+	this.attackCooldown = 0;
     }
 
     nextTurn(map) {
+	if (this.attackCooldown > 0) {
+	    --this.attackCooldown;
+	}
 	if (this.running) {
 	    this.doNextMove(map);
 	}
 	this.doNextMove(map);
+	if (this.target && this.target.type == UnitTypes.MOB) {
+	    this.attack();
+	}
+    }
+
+    attack() {
+	if (this.attackCooldown <= 0) {
+	    this.attackCooldown = 4;
+	} else {
+	    return;
+	}
+	let dam = Math.floor(Math.random() * (WEAPON_MAX + 1));
+	if (Math.random() > WEAPON_ACCURACY) {
+	    dam = 0;
+	}
+	this.target.damage(dam);
     }
 
     get type() {
