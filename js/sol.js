@@ -6,7 +6,11 @@ import * as shield1 from "./attacks/shield1.js";
 import * as shield2 from "./attacks/shield2.js";
 import * as spear1 from "./attacks/spear1.js";
 import * as spear2 from "./attacks/spear2.js";
+import * as parry from "./attacks/parry.js";
+import {PhaseTransition} from "./attacks/phaseTransition.js";
 
+var SPECIAL_FREQUENCY = 0.1;
+var SPECIAL_HP_LIMIT = 1350;
 export class SolMob extends Mob {
 
     
@@ -16,7 +20,6 @@ export class SolMob extends Mob {
 	this.attacking = false;
 	this.spear2 = false;
 	this.shield2 = false;
-	this.showAttackPattern = false;
 	this.label = null;
 	this.stunned = 2;
 	this.stats = {
@@ -28,6 +31,34 @@ export class SolMob extends Mob {
 	    hitpoint: 1500
 	};
 	this.currentStats = {...this.stats};
+	this.phase = 1;
+	this.lastPhaseHp = this.currentStats.hitpoint;
+	this.nextPhaseHp = this.getNextPhaseHp();
+    }
+
+    startOfTick() {
+	super.startOfTick();
+	this.lastPhaseHp = this.currentStats.hitpoint;
+    }
+
+    getNextPhaseHp() {
+	const hp = this.lastPhaseHp;
+	if (hp > 1350) {
+	    return 1350;
+	}
+	if (hp > 1100) {
+	    return 1100;
+	}
+	if (hp > 750) {
+	    return 750;
+	}
+	if (hp > 400) {
+	    return 400;
+	}
+	if (hp > 150) {
+	    return 150;
+	}
+	return 0;
     }
 
 
@@ -36,15 +67,17 @@ export class SolMob extends Mob {
     }
 
     nextTurn(map) {
-	this.showAttackPattern = false;
+	if (this.currentStats.hitpoint <= 0) {
+	    return;
+	}
 	if (this.stunned > 0) {
 	    --this.stunned;
 	    return;
 	}
 	if (!this.attacking && --this.resting == 0) {
 	    this.attacking = true;
-	    this.attack = this.nextAttack;
 	    this.ticksToDamage = 4;
+	    this.attack = this.nextAttack;
 	    this.label = this.attack.label();
 	}
 
@@ -53,14 +86,9 @@ export class SolMob extends Mob {
 	    this.label = null;
 	    this.doNextMove(map);
 	} else {
-	    if(--this.ticksToDamage == 0) {
-		this.showAttackPattern = true;
-		if (this.target) {
-		    const [x,y] = this.target.position;
-		    if (this.attack.isInside(x,y,this.center)) {
-			this.attack.damage(this.target);
-		    }
-		}
+	    --this.ticksToDamage;
+	    this.attack.damage(this.target, this);
+	    if(this.ticksToDamage == 0) {
 		this.attacking = false;
 		this.resting = 4;
 	    }
@@ -69,7 +97,7 @@ export class SolMob extends Mob {
 
     draw(scene) {
 	super.draw(scene);
-	if(this.showAttackPattern) {
+	if(this.attack && this.attack.draw) {
 	    this.attack.draw(scene, this);
 	}
 	if(this.label) {
@@ -89,26 +117,71 @@ export class SolMob extends Mob {
 	}
     }
 
+    getNextTransitionPhase() {
+	const hp = this.lastPhaseHp;
+	if (hp > 1100) {
+	    this.phase = 2;
+	    return new PhaseTransition("Phase 2");
+	}
+	if (hp > 750) {
+	    this.phase = 3;
+	    return new PhaseTransition("Phase 3");
+	}
+	if (hp > 400) {
+	    this.phase = 4;
+	    return new PhaseTransition("Phase 4");
+	}
+	if (hp > 150) {
+	    this.phase = 5;
+	    return new PhaseTransition("Phase 5");
+	}
+	if (hp > 0) {
+	    this.phase = 5;
+	    return new PhaseTransition("Enrage");
+	}
+	this.phase = 6;
+	return new PhaseTransition("Surprise, volatility");
+    }
+
     get nextAttack() {
 	const isSpear = Math.random() < 0.5;
+
+	if (this.lastPhaseHp <= this.nextPhaseHp) {
+	    this.nextPhaseHp = this.getNextPhaseHp();
+	    return this.getNextTransitionPhase();
+	}
+	
+	if (this.currentStats.hitpoint < SPECIAL_HP_LIMIT) {
+	    const r = Math.random();
+	    if (r < SPECIAL_FREQUENCY) {
+		this.spear2 = false;
+		this.shield2 = false;
+		this.ticksToDamage = parry.ticksTaken(this);
+		return new parry.Parry();
+	    }
+	}
 	if (isSpear) {
 	    if(this.spear2) {
 		this.spear2 = false;
 		this.shield2 = false;
+		this.ticksToDamage = spear2.ticksTaken(this);
 		return spear2;
 	    } else {
 		this.spear2 = true;
 		this.shield2 = false;
+		this.ticksToDamage = spear1.ticksTaken(this);
 		return spear1;
 	    }
 	}
 	if(this.shield2) {
 	    this.shield2 = false;
 	    this.spear2 = false;
+	    this.ticksToDamage = shield2.ticksTaken(this);
 	    return shield2;
 	} else {
 	    this.shield2 = true;
 	    this.spear2 = false;
+	    this.ticksToDamage = shield1.ticksTaken(this);
 	    return shield1;
 	}
     }

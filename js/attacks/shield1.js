@@ -2,6 +2,9 @@ import * as normalDamage from "./normalAttackDamage.js";
 const SAFE_DIST = 4;
 
 export function draw(scene, sol) {
+    if (sol.ticksToDamage > 0) {
+	return;
+    }
     const alpha = scene.ctx.globalAlpha;
     const color = scene.ctx.fillStyle;
     scene.ctx.fillStyle = "#ccc";
@@ -28,6 +31,19 @@ export function label() {
     return "shield";
 }
 
-export function damage(target) {
-    normalDamage.damage(target);
+export function damage(target, sol) {
+    if (!target || sol.ticksToDamage > 0) {
+	return;
+    }
+    const p = target.position;
+    if (isInside(p[0], p[1], sol.center)) {
+	normalDamage.damage(target);
+    }
+}
+
+export function ticksTaken(sol) {
+    if (sol.phase >= 3) {
+	return 3;
+    }
+    return 4;
 }

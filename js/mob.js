@@ -9,6 +9,7 @@ let index = 0;
 const prayerImgs = {
     mage:"../mageOver.png",
     range:"../rangeOver.png",
+    melee:"./assets/melee.png",
 };
 
 export class Mob {
@@ -215,17 +216,15 @@ export class Mob {
 
 
 	this.drawDamage(scene);
+    }
+
+    startOfTick() {
 	this.damageTaken = null;
     }
 
     drawDamage(scene) {
-	scene.ctx.drawImage(this.image,
-			    (this.position[0]) * scene.tilesize,
-			    (this.position[1]-this.size+1) * scene.tilesize,
-			    this.size * scene.tilesize,
-			    this.size * scene.tilesize);
 	if(this.damageTaken != null) {
-	    const position = [this.position[0] + this.size/2 - 0.5, this.position[1] + 1];
+	    const position = [this.position[0] + this.size/2 - 0.5, this.position[1] + 0.75];
 	    
 	    const center = vectors.mulVec(position, scene.tilesize);
 	    const ctx = scene.ctx;

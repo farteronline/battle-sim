@@ -130,7 +130,7 @@ class Scene {
 
 let scene = null;
 let map = null;
-let imgNames = ["map", "player", "sol"].map(x=>`./assets/${x}.png`)
+let imgNames = ["map", "player", "sol", "melee"].map(x=>`./assets/${x}.png`)
 let imagestore = null;
 let targetstore = null;
 let player = null;
@@ -194,9 +194,11 @@ async function main() {
 
 
 function mainLoop(){
-
+    
     tickCounter.tick();
     const monsters = [solMob];
+    monsters.map(x=>x.startOfTick());
+    player.startOfTick();
     let stillGoing = false;
     player.nextTurn(map);
 
@@ -256,6 +258,14 @@ function prayRange() {
     }
     player.prayer = "range";
 }
+function prayMelee() {
+    if (player.prayer == "melee") {
+	player.prayer = null;
+	return;
+    }
+    player.prayer = "melee";
+}
+
 function prayMage() {
     if (player.prayer == "mage") {
 	player.prayer = null;
@@ -284,5 +294,6 @@ function makeimgbt(img, onclick) {
     return button;
 }
 
+makeimgbt("./assets/melee.png", prayMelee);
 
 main();
