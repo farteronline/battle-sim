@@ -9,6 +9,8 @@ import * as spear2 from "./attacks/spear2.js";
 import * as parry from "./attacks/parry.js";
 import {PhaseTransition} from "./attacks/phaseTransition.js";
 import {BLOCK_WALL,BLOCK_FREE,BLOCK_MOB} from "./map.js";
+import {pickRandIndex} from "./randoms.js";
+
 
 var SPECIAL_FREQUENCY = 0.1;
 var SPECIAL_HP_LIMIT = 1350;
@@ -33,6 +35,7 @@ export class SolMob extends Mob {
 	};
 	this.currentStats = {...this.stats};
 	this.phase = 1;
+	this.ticksToNewTile = 3;
 	this.lastPhaseHp = this.currentStats.hitpoint;
 	this.nextPhaseHp = this.getNextPhaseHp();
     }
@@ -75,6 +78,16 @@ export class SolMob extends Mob {
 	}).filter(x=>x!=null);
     }
 
+    spawnANewTile() {
+	let index = pickRandIndex(this.spawnableTiles);
+	const tile = this.spawnableTiles.splice(index,1)[0];
+	this.spawnTile(tile);
+    }
+
+    spawnATileUnderTarget() {
+	this.spawnTile(this.target.position);
+    }
+
 
     get center() {
 	return [this.position[0] + 2, this.position[1] - 2];
@@ -110,6 +123,13 @@ export class SolMob extends Mob {
 	    this.label = this.attack.label();
 	}
 
+	if (this.phase >= 5) {
+	    if(--this.ticksToNewTile == 0) {
+		this.ticksToNewTile = 3;
+		this.spawnANewTile();
+	    }
+	}
+
 	if (!this.attacking) {
 	    this.attack = null;
 	    this.label = null;
@@ -125,13 +145,16 @@ export class SolMob extends Mob {
     }
 
     draw(scene) {
+	const ctx = scene.ctx;
+	const fillColor = ctx.fillStyle;
+	ctx.fillStyle = "orange";
+	this.spawnedTiles.map(tile=>scene.drawTile(tile[0], tile[1]));
+	ctx.fillStyle = fillColor;
+
 	super.draw(scene);
 	if(this.attack && this.attack.draw) {
 	    this.attack.draw(scene, this);
 	}
-	const ctx = scene.ctx;
-	const fillColor = ctx.fillStyle;
-
 	if(this.label) {
 	    const center = vectors.mulVec(this.center, scene.tilesize);
 	    const strokeColor = ctx.strokeStyle;
@@ -145,8 +168,6 @@ export class SolMob extends Mob {
 	    ctx.lineWidth = lineWidth;
 	}
 
-	ctx.fillStyle = "orange";
-	this.spawnedTiles.map(tile=>scene.drawTile(tile[0], tile[1]));
 	ctx.fillStyle = fillColor;
     }
 

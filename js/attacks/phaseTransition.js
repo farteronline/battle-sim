@@ -1,15 +1,12 @@
-import {pickRandIndex} from "../randoms.js";
-
 export class PhaseTransition {
     constructor(label, sol) {
 	this.text = label;
-	console.log(sol.phase);
-	if (sol.phase >= 2 && sol.phase <=4) {
-	    for(var i = 0; i < 6; ++i) {
-		let index = pickRandIndex(sol.spawnableTiles);
-		const tile = sol.spawnableTiles.splice(index,1)[0];
-		sol.spawnTile(tile);
+	if (sol.phase >= 2 && sol.phase <=5) {
+	    const maxSpawn = sol.phase == 5? 4:5;
+	    for(var i = 0; i < maxSpawn; ++i) {
+		sol.spawnANewTile();
 	    }
+	    sol.spawnATileUnderTarget();
 	}
     }
 
