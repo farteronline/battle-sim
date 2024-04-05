@@ -26,7 +26,7 @@ export function isInside(x, y, center) {
     const dx = Math.abs(x - center[0]);
     const dy = Math.abs(y - center[1]);
     const normalSides = (dx < SAFE_DIST && dy < SAFE_DIST) || dx == 0 || dy == 0 || dx == 2 || dy == 2;
-    const diagonalWrongLines = (dx - dy) == 1 || (dy - dx) == 1;
+    const diagonalWrongLines = (dx - dy) == 1 || (dy - dx) == 1 || (dx - dy) == 2 || (dy - dx) == 2;
     const isInCorner = dx > SAFE_DIST -2 && dy > SAFE_DIST -2;
     return  normalSides || (isInCorner && !diagonalWrongLines);
 }
