@@ -110,6 +110,7 @@ export class SolMob extends Mob {
 	    this.target.damage(Math.floor(Math.random() * 11));
 	}
 	if (this.currentStats.hitpoint <= 0) {
+	    this.label = "Surprise, volatility";
 	    return;
 	}
 	if (this.stunned > 0) {
@@ -123,7 +124,7 @@ export class SolMob extends Mob {
 	    this.label = this.attack.label();
 	}
 
-	if (this.phase >= 5) {
+	if (this.phase >= 6) {
 	    if(--this.ticksToNewTile == 0) {
 		this.ticksToNewTile = 3;
 		this.spawnANewTile();
@@ -176,23 +177,23 @@ export class SolMob extends Mob {
 	const sol = this;
 	if (hp > 1100) {
 	    this.phase = 2;
-	    return new PhaseTransition("Phase 2", sol);
+	    return new PhaseTransition("Phase 2: something else", sol);
 	}
 	if (hp > 750) {
 	    this.phase = 3;
-	    return new PhaseTransition("Phase 3", sol);
+	    return new PhaseTransition("Phase 3: handle this", sol);
 	}
 	if (hp > 400) {
 	    this.phase = 4;
-	    return new PhaseTransition("Phase 4", sol);
+	    return new PhaseTransition("Phase 4: can't win", sol);
 	}
 	if (hp > 150) {
 	    this.phase = 5;
-	    return new PhaseTransition("Phase 5", sol);
+	    return new PhaseTransition("Phase 5: guided hand", sol);
 	}
 	if (hp > 0) {
 	    this.phase = 6;
-	    return new PhaseTransition("Enrage", sol);
+	    return new PhaseTransition("Enrage: end this", sol);
 	}
 	this.phase = 7;
 	return new PhaseTransition("Surprise, volatility", sol);
