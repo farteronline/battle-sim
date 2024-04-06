@@ -1,5 +1,5 @@
 import * as normalDamage from "./normalAttackDamage.js";
-const SAFE_DIST = 4;
+const SAFE_DIST = 3;
 
 export function draw(scene, sol) {
     if (sol.ticksToDamage > 0) {
@@ -24,10 +24,10 @@ export function draw(scene, sol) {
 export function isInside(x, y, center) {
     const dx = Math.abs(x - center[0]);
     const dy = Math.abs(y - center[1]);
-    const normalSides = (dx < SAFE_DIST && dy < SAFE_DIST) || dx == 1 || dy == 1;
-    const diagonalWrongLines = (dx - dy) == 2 || (dy - dx) == 2 || dx - dy == 0;
+    const normalSides = (dx < SAFE_DIST && dy < SAFE_DIST) || dx == 1 || dy == 1 || (dx == SAFE_DIST && dy < SAFE_DIST) || (dy == SAFE_DIST && dx < SAFE_DIST);
+    const lines = (dx - dy) == 1 || (dy - dx) == 1;
     const isInCorner = dx > SAFE_DIST -2 && dy > SAFE_DIST -2;
-    return  normalSides || (isInCorner && !diagonalWrongLines);
+    return  normalSides || lines;
 }
 
 export function label() {
