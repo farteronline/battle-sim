@@ -118,20 +118,27 @@ export class SolMob extends Mob {
 
     spawnTile(tile) {
 	if (!this.tileMap[this.tileIndex(tile)]) {
-	    this.tileMap[this.tileIndex(tile)] = true;
 	    this.newSpawnedTiles.push(tile);
 	    this.ticksToSpawnTiles = 2;
 	}
     }
+
+    convertNewSpawnedTilesToSpawnedTiles() {
+	this.newSpawnedTiles.map(tile=>{
+	    this.spawnedTiles.push(tile);
+	    this.tileMap[this.tileIndex(tile)] = true;
+	});
+	this.newSpawnedTiles = [];
+    }
+    
     nextTurn(map) {
-	if (this.isInBadTile(this.target.position)) {
-	    this.target.damage(Math.floor(Math.random() * 11));
-	}
 	if(this.ticksToSpawnTiles > 0) {
 	    if(--this.ticksToSpawnTiles == 0) {
-		this.newSpawnedTiles.map(tile=>this.spawnedTiles.push(tile));
-		this.newSpawnedTiles = [];
+		this.convertNewSpawnedTilesToSpawnedTiles();
 	    }
+	}
+	if (this.isInBadTile(this.target.position)) {
+	    this.target.damage(Math.floor(Math.random() * 11));
 	}
 	
 	if (this.currentStats.hitpoint <= 0) {
