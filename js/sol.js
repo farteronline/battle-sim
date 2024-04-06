@@ -14,12 +14,13 @@ import {pickRandIndex} from "./randoms.js";
 
 var SPECIAL_FREQUENCY = 0.1;
 var SPECIAL_HP_LIMIT = 1350;
+var REST_TICKS = 4;
 export class SolMob extends Mob {
 
     
     setStats () {
 	super.setStats();
-	this.resting = 4;
+	this.resting = REST_TICKS;
 	this.attacking = false;
 	this.spear2 = false;
 	this.shield2 = false;
@@ -66,6 +67,7 @@ export class SolMob extends Mob {
     }
 
     initMap(map) {
+	this.map = map;
 	this.tileMap = {};
 	this.spawnedTiles = [];
 	this.newSpawnedTiles = [];
@@ -81,6 +83,17 @@ export class SolMob extends Mob {
     }
 
     spawnANewTile() {
+	const dx = Math.floor(Math.random() * 12 - 5);
+	const dy = Math.floor(Math.random() * 12 - 5);
+	const tile = vectors.addVec([dx,dy], this.target.position);
+	if (this.map.getBlocking(tile[0], tile[1]) != BLOCK_WALL && !this.tileMap[this.tileIndex(tile)]) {
+	    this.spawnTile(tile);
+	} else {
+	    this.spawnANewTileOld();
+	}
+    }
+    
+    spawnANewTileOld() {
 	let index = pickRandIndex(this.spawnableTiles);
 	const tile = this.spawnableTiles.splice(index,1)[0];
 	this.spawnTile(tile);
@@ -104,9 +117,11 @@ export class SolMob extends Mob {
     }
 
     spawnTile(tile) {
-	this.tileMap[this.tileIndex(tile)] = true;
-	this.newSpawnedTiles.push(tile);
-	this.ticksToSpawnTiles = 2;
+	if (!this.tileMap[this.tileIndex(tile)]) {
+	    this.tileMap[this.tileIndex(tile)] = true;
+	    this.newSpawnedTiles.push(tile);
+	    this.ticksToSpawnTiles = 2;
+	}
     }
     nextTurn(map) {
 	if (this.isInBadTile(this.target.position)) {
@@ -150,7 +165,7 @@ export class SolMob extends Mob {
 	    this.attack.damage(this.target, this);
 	    if(this.ticksToDamage == 0) {
 		this.attacking = false;
-		this.resting = 4;
+		this.resting = REST_TICKS;
 	    }
 	}
     }
