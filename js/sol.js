@@ -83,8 +83,9 @@ export class SolMob extends Mob {
     }
 
     spawnANewTile() {
-	const dx = Math.floor(Math.random() * 12 - 5);
-	const dy = Math.floor(Math.random() * 12 - 5);
+	const radius = 3;
+	const dx = Math.floor(Math.random() * (radius * 2 + 2) - radius);
+	const dy = Math.floor(Math.random() * (radius * 2 + 2) - radius);
 	const tile = vectors.addVec([dx,dy], this.target.position);
 	if (this.map.getBlocking(tile[0], tile[1]) != BLOCK_WALL && !this.tileMap[this.tileIndex(tile)]) {
 	    this.spawnTile(tile);
