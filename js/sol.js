@@ -68,6 +68,8 @@ export class SolMob extends Mob {
     initMap(map) {
 	this.tileMap = {};
 	this.spawnedTiles = [];
+	this.newSpawnedTiles = [];
+	this.ticksToSpawnTiles = 0;
 	this.spawnableTiles = map.blocking.map((t,i)=>{
 	    const x = i % map.width;
 	    const y = Math.floor(i / map.width);
@@ -103,12 +105,20 @@ export class SolMob extends Mob {
 
     spawnTile(tile) {
 	this.tileMap[this.tileIndex(tile)] = true;
-	this.spawnedTiles.push(tile);
+	this.newSpawnedTiles.push(tile);
+	this.ticksToSpawnTiles = 2;
     }
     nextTurn(map) {
 	if (this.isInBadTile(this.target.position)) {
 	    this.target.damage(Math.floor(Math.random() * 11));
 	}
+	if(this.ticksToSpawnTiles > 0) {
+	    if(--this.ticksToSpawnTiles == 0) {
+		this.newSpawnedTiles.map(tile=>this.spawnedTiles.push(tile));
+		this.newSpawnedTiles = [];
+	    }
+	}
+	
 	if (this.currentStats.hitpoint <= 0) {
 	    this.label = "Surprise, volatility";
 	    return;
@@ -150,6 +160,8 @@ export class SolMob extends Mob {
 	const fillColor = ctx.fillStyle;
 	ctx.fillStyle = "orange";
 	this.spawnedTiles.map(tile=>scene.drawTile(tile[0], tile[1]));
+	ctx.fillStyle = "white";
+	this.newSpawnedTiles.map(tile=>scene.drawTile(tile[0], tile[1]));
 	ctx.fillStyle = fillColor;
 
 	super.draw(scene);
