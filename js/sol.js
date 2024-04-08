@@ -8,6 +8,7 @@ import * as spear1 from "./attacks/spear1.js";
 import * as spear2 from "./attacks/spear2.js";
 import * as parry from "./attacks/parry.js";
 import * as grapple from "./attacks/grapple.js";
+//import {Howl, Howler} from './3rd_party/howler.min.js';
 
 import {PhaseTransition} from "./attacks/phaseTransition.js";
 import {BLOCK_WALL,BLOCK_FREE,BLOCK_MOB} from "./map.js";
@@ -17,8 +18,32 @@ import {pickRandIndex} from "./randoms.js";
 var SPECIAL_FREQUENCY = 0.2;
 var SPECIAL_HP_LIMIT = 1350;
 var REST_TICKS = 4;
-export class SolMob extends Mob {
+var PLAY_SOUND = JSON.parse(localStorage.getItem("sound-check"));
+var spear_sound = new Howl({
+    src: ['./assets/spear.wav']
+});
+var shield_sound = new Howl({
+    src: ['./assets/shield.wav']
+});
+var parry1_sound = new Howl({
+    src: ['./assets/parry1.wav']
+});
+var parry2_sound = new Howl({
+    src: ['./assets/parry2.wav']
+});
 
+
+window.addEventListener("load", function() {
+    console.log(222);
+    document.getElementById("sound-check").checked = PLAY_SOUND;
+    document.getElementById("sound-check").onchange = function() {
+	PLAY_SOUND = this.checked;
+	localStorage.setItem("sound-check",JSON.stringify(PLAY_SOUND))
+    };
+});
+
+export class SolMob extends Mob {
+    
     
     setStats () {
 	super.setStats();
@@ -256,14 +281,25 @@ export class SolMob extends Mob {
 		    this.ticksToDamage = grapple.ticksTaken(this);
 		    return new grapple.Grapple();
 		} else {
+		    
 		    this.spear2 = false;
 		    this.shield2 = false;
 		    this.ticksToDamage = parry.ticksTaken(this);
+		    if (PLAY_SOUND) {
+			if (this.ticksToDamage == 10) {
+			    parry1_sound.play();
+			} else {
+			    parry2_sound.play();
+			}
+		    }
 		    return new parry.Parry();
 		}
 	    }
 	}
 	if (isSpear) {
+	    if (PLAY_SOUND) {
+		spear_sound.play();
+	    }
 	    if(this.spear2) {
 		this.spear2 = false;
 		this.shield2 = false;
@@ -276,7 +312,11 @@ export class SolMob extends Mob {
 		return spear1;
 	    }
 	}
+	if (PLAY_SOUND) {
+	    shield_sound.play();
+	}
 	if(this.shield2) {
+
 	    this.shield2 = false;
 	    this.spear2 = false;
 	    this.ticksToDamage = shield2.ticksTaken(this);

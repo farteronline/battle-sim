@@ -8,8 +8,12 @@
   <body>
     <div>
       <canvas class="canvas" id="canvas"></canvas>
-      <div id="buttons"></div>
+      <div id="buttons">
+	<label for="sound-check"> enable sound</label> <input type="checkbox" id="sound-check"></input>
+	<br>
+      </div>
       <div id="armor-tab" class="armor-tab"></div>
+      <script type="module" src="./3rd_party/howler.min.js"></script>
       <script type="module" src="./js/tickCounter.js"></script>
       <script type="module" src="./js/randoms.js"></script>
       <script type="module" src="./js/vector-stuff.js"></script>
