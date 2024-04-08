@@ -47,8 +47,5 @@ export function damage(target, sol) {
 
 
 export function ticksTaken(sol) {
-    if (sol.phase >= 3) {
-	return 3;
-    }
     return 4;
 }

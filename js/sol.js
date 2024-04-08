@@ -218,6 +218,7 @@ export class SolMob extends Mob {
 	}
 	if (hp > 750) {
 	    this.phase = 3;
+	    REST_TICKS = 3;
 	    return new PhaseTransition("Phase 3: handle this", sol);
 	}
 	if (hp > 400) {
