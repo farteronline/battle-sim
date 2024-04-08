@@ -24,3 +24,48 @@ img {
     -webkit-user-select: none;
     -ms-user-select: none;
 }
+
+.armor-tab{
+    float:left;
+    position:relative;
+    background: black;
+    width: 200px;
+    height: 300px;
+}
+
+.button-hands {
+    position: absolute;
+    top: 169px;
+    left: 0px;
+}
+
+.button-boots {
+    position: absolute;
+    top: 195px;
+    left: 68px;
+}
+
+.button-body {
+    position: absolute;
+    top: 69px;
+    left: 68px;
+}
+
+
+.button-cape {
+    position: absolute;
+    top: 55px;
+    left: 0px;
+}
+
+.button-back {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+.button-legs {
+    position: absolute;
+    top: 131px;
+    left: 68px;
+}

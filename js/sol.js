@@ -7,12 +7,14 @@ import * as shield2 from "./attacks/shield2.js";
 import * as spear1 from "./attacks/spear1.js";
 import * as spear2 from "./attacks/spear2.js";
 import * as parry from "./attacks/parry.js";
+import * as grapple from "./attacks/grapple.js";
+
 import {PhaseTransition} from "./attacks/phaseTransition.js";
 import {BLOCK_WALL,BLOCK_FREE,BLOCK_MOB} from "./map.js";
 import {pickRandIndex} from "./randoms.js";
 
 
-var SPECIAL_FREQUENCY = 0.1;
+var SPECIAL_FREQUENCY = 0.2;
 var SPECIAL_HP_LIMIT = 1350;
 var REST_TICKS = 4;
 export class SolMob extends Mob {
@@ -237,6 +239,7 @@ export class SolMob extends Mob {
     get nextAttack() {
 	const isSpear = Math.random() < 0.5;
 
+
 	if (this.lastPhaseHp <= this.nextPhaseHp) {
 	    this.nextPhaseHp = this.getNextPhaseHp();
 	    return this.getNextTransitionPhase();
@@ -245,10 +248,18 @@ export class SolMob extends Mob {
 	if (this.currentStats.hitpoint < SPECIAL_HP_LIMIT) {
 	    const r = Math.random();
 	    if (r < SPECIAL_FREQUENCY) {
-		this.spear2 = false;
-		this.shield2 = false;
-		this.ticksToDamage = parry.ticksTaken(this);
-		return new parry.Parry();
+		const isGrapple = Math.random() < 0.3;
+		if (isGrapple) {
+		    this.spear2 = false;
+		    this.shield2 = false;
+		    this.ticksToDamage = grapple.ticksTaken(this);
+		    return new grapple.Grapple();
+		} else {
+		    this.spear2 = false;
+		    this.shield2 = false;
+		    this.ticksToDamage = parry.ticksTaken(this);
+		    return new parry.Parry();
+		}
 	    }
 	}
 	if (isSpear) {
