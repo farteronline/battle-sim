@@ -13,6 +13,7 @@ const BODY_PARTS = [
 export class Grapple {
     constructor() {
 	this.part = randoms.pickRand(BODY_PARTS);
+	this.isPerfect = false;
     }
 
     draw(scene, sol) {
@@ -26,6 +27,9 @@ export class Grapple {
     damage(target, sol) {
 	const elapsed = ticksTaken(sol) - sol.ticksToDamage;
 	console.log(elapsed, sol.ticksToDamage);
+	if (sol.ticksToDamage == 1 && target.slotClicked != this.part) {
+	    this.isPerfect = true;
+	}
 	if (sol.ticksToDamage != 0) {
 	    return;
 	}
@@ -33,6 +37,8 @@ export class Grapple {
 
 	if (target.slotClicked != this.part){
 	    normalDamage.damage(target);
+	} else if (this.isPerfect) {
+	    target.freeMax = true;
 	}
 	target.slotClicked = null;
     }

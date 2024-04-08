@@ -45,6 +45,10 @@ export class PlayerMob extends Mob {
 	if (Math.random() > WEAPON_ACCURACY) {
 	    dam = 0;
 	}
+	if (this.freeMax) {
+	    this.freeMax = false;
+	    dam = WEAPON_MAX;
+	}
 	this.target.damage(dam);
     }
 
