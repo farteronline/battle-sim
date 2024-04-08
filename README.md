@@ -59,7 +59,7 @@ Non-existant, but planned at least for brew / restore / super combat
 - cannot swap using f keys (or any keys) as its always visible
 - Cannot unequip anything if you misclick at wrong time
 
-### Special attacks
+### Special attacks (like DWH)
 
 - Not planned
 
