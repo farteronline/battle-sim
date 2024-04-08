@@ -6,7 +6,6 @@ Try it here: https://farteronline.github.io/battle-sim/index.html
 ### Basic attacks 
 
 - Complete
-- Needs audio
 - Diagonals game accurate
 - Pattern resets game accurate
 - accurate damage most likely
@@ -25,7 +24,6 @@ Try it here: https://farteronline.github.io/battle-sim/index.html
 #### Parry
 
 - Complete
-- Needs audio
 - Timing adjusts at phase >= 4 to be one tick longer for final swipe
 - unsure if damage is accurate
 
@@ -65,7 +63,8 @@ Non-existant, but planned at least for brew / restore / super combat
 
 ### Sounds
 
-Planned, not done yet
+- Parry, Parry alternate, shield, spear
+- theyre custom, sorry, copyright exists.
 
 ### Dps like scythe
 
