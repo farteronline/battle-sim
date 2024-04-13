@@ -110,9 +110,9 @@ class Scene {
 	ctx.font = "20px serif";
     }
 
-    drawAll(){
-	this.draw();
-	this.drawables.forEach(x=>x.draw(this));
+    drawAll(currentAnimationFrame){
+	this.draw(currentAnimationFrame);
+	this.drawables.forEach(x=>x.draw(this, currentAnimationFrame));
     }
 
     draw() {
@@ -131,7 +131,7 @@ class Scene {
 
 let scene = null;
 let map = null;
-let imgNames = ["map", "player", "sol", "sol_spear", "sol_shield", "melee"].map(x=>`./assets/${x}.png`)
+let imgNames = ["map", "player", "parry", "sol", "sol_spear", "sol_shield", "melee"].map(x=>`./assets/${x}.png`)
 let imagestore = null;
 let targetstore = null;
 let player = null;
@@ -197,25 +197,34 @@ async function main() {
 
 
 
+let currentAnimationFrame = 0;
+let framesPerTick = 9;
+const animated = true;
 
 function mainLoop(){
-    
-    tickCounter.tick();
-    const monsters = [solMob];
-    monsters.map(x=>x.startOfTick());
-    player.startOfTick();
-    let stillGoing = false;
-    player.nextTurn(map);
 
-    const didMove = monsters.map(x=>x.nextTurn(map));
-    const didMoveAny = didMove.indexOf(true) != -1;
-    stillGoing = stillGoing || didMoveAny;
+    if (currentAnimationFrame % framesPerTick == 0) {
+	tickCounter.tick();
+	const monsters = [solMob];
+	monsters.map(x=>x.startOfTick());
+	player.startOfTick();
+	let stillGoing = false;
+	player.nextTurn(map);
 
+	const didMove = monsters.map(x=>x.nextTurn(map));
+	const didMoveAny = didMove.indexOf(true) != -1;
+	stillGoing = stillGoing || didMoveAny;
+    }
 
-    scene.drawAll();
+    scene.drawAll(currentAnimationFrame);
 
-
-    setTimeout(mainLoop, 600);
+    if (animated) {
+	currentAnimationFrame += 1;
+	setTimeout(mainLoop, 60);
+    } else {
+	currentAnimationFrame += framesPerTick;
+	setTimeout(mainLoop, 600);
+    }
 
 }
 

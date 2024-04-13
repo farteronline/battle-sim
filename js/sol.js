@@ -70,6 +70,7 @@ export class SolMob extends Mob {
 	this.nextPhaseHp = this.getNextPhaseHp();
 	this.forceSpear = true;
 	this.cur_img = "./assets/sol.png";
+	this.sprite = null;
     }
 
     startOfTick() {
@@ -214,7 +215,23 @@ export class SolMob extends Mob {
 
     }
 
-    draw(scene) {
+    drawSprite(scene, currentAnimationFrame) {
+	if(this.sprite == null){
+	    return super.drawSprite(scene, currentAnimationFrame);
+	}
+
+	this.sprite.draw(scene.ctx,
+			 (this.position[0]) * scene.tilesize,
+			 (this.position[1]-this.size+1) * scene.tilesize,
+			 this.size * scene.tilesize,
+			 this.size * scene.tilesize,
+			 this.animationStart,
+			 currentAnimationFrame);
+
+    }
+
+    draw(scene, currentAnimationFrame) {
+	this.currentAnimationFrame = currentAnimationFrame;
 	const ctx = scene.ctx;
 	const fillColor = ctx.fillStyle;
 	ctx.fillStyle = "orange";
@@ -223,7 +240,7 @@ export class SolMob extends Mob {
 	this.newSpawnedTiles.map(tile=>scene.drawTile(tile[0], tile[1]));
 	ctx.fillStyle = fillColor;
 
-	super.draw(scene);
+	super.draw(scene, currentAnimationFrame);
 	if(this.attack && this.attack.draw) {
 	    this.attack.draw(scene, this);
 	}
@@ -241,6 +258,7 @@ export class SolMob extends Mob {
 	}
 
 	ctx.fillStyle = fillColor;
+	this.currentAnimationFrame = currentAnimationFrame + 1;
     }
 
     getNextTransitionPhase() {

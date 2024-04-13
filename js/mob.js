@@ -181,7 +181,7 @@ export class Mob {
 	return imagestore.images[prayerImgs[this.prayer]];
     }
 
-    draw(scene){
+    drawHp(scene) {
 	scene.ctx.fillStyle="#ff0000";
 	scene.ctx.fillRect(
 	    (this.position[0]) * scene.tilesize,
@@ -194,27 +194,37 @@ export class Mob {
 	    (this.position[1]-this.size+1) * scene.tilesize,
 	    this.size * scene.tilesize * this.currentStats.hitpoint/this.stats.hitpoint,
 	    5);
-	
+
+    }
+
+    drawAfterEffects(scene) {
+	scene.ctx.strokeStyle="#5688b0";
+	scene.ctx.strokeRect(
+	    (this.position[0]) * scene.tilesize,
+	    (this.position[1]-this.size+1) * scene.tilesize,
+	    this.size * scene.tilesize,
+	    this.size * scene.tilesize);
+	if (this.prayer) {
+	    scene.ctx.drawImage(this.prayerImage,
+				(this.position[0]) * scene.tilesize,
+				(this.position[1]-this.size + 1) * scene.tilesize,
+				this.size * scene.tilesize,
+				this.size * scene.tilesize);
+	}
+    }
+
+    drawSprite(scene, currentAnimationFrame) {
 	scene.ctx.drawImage(this.image,
 			    (this.position[0]) * scene.tilesize,
 			    (this.position[1]-this.size+1) * scene.tilesize,
 			    this.size * scene.tilesize,
 			    this.size * scene.tilesize);
-	scene.ctx.strokeStyle="#5688b0";
-	scene.ctx.strokeRect(
-			    (this.position[0]) * scene.tilesize,
-			    (this.position[1]-this.size+1) * scene.tilesize,
-			    this.size * scene.tilesize,
-	    this.size * scene.tilesize);
-	if (this.prayer) {
-	    scene.ctx.drawImage(this.prayerImage,
-			    (this.position[0]) * scene.tilesize,
-			    (this.position[1]-this.size + 1) * scene.tilesize,
-			    this.size * scene.tilesize,
-			    this.size * scene.tilesize);
-	}
-
-
+    }
+    
+    draw(scene, currentAnimationFrame){
+	this.drawHp(scene);
+	this.drawSprite(scene, currentAnimationFrame);
+	this.drawAfterEffects(scene);
 	this.drawDamage(scene);
     }
 
