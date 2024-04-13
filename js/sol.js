@@ -34,7 +34,6 @@ var parry2_sound = new Howl({
 
 
 window.addEventListener("load", function() {
-    console.log(222);
     document.getElementById("sound-check").checked = PLAY_SOUND;
     document.getElementById("sound-check").onchange = function() {
 	PLAY_SOUND = this.checked;
@@ -44,7 +43,10 @@ window.addEventListener("load", function() {
 
 export class SolMob extends Mob {
     
-    
+    get image() {
+	return imagestore.images[this.cur_img];
+    }
+
     setStats () {
 	super.setStats();
 	this.resting = REST_TICKS;
@@ -66,6 +68,8 @@ export class SolMob extends Mob {
 	this.ticksToNewTile = 3;
 	this.lastPhaseHp = this.currentStats.hitpoint;
 	this.nextPhaseHp = this.getNextPhaseHp();
+	this.forceSpear = true;
+	this.cur_img = "./assets/sol.png";
     }
 
     startOfTick() {
@@ -133,7 +137,7 @@ export class SolMob extends Mob {
 
 
     get center() {
-	return [this.position[0] + 2, this.position[1] - 2];
+	return [this.lastPosition[0] + 2, this.lastPosition[1] - 2];
     }
 
     tileIndex(tile) {
@@ -191,18 +195,23 @@ export class SolMob extends Mob {
 	    }
 	}
 
-	if (!this.attacking) {
-	    this.attack = null;
-	    this.label = null;
-	    this.doNextMove(map);
-	} else {
+	if (this.attacking) {
 	    --this.ticksToDamage;
 	    this.attack.damage(this.target, this);
 	    if(this.ticksToDamage == 0) {
 		this.attacking = false;
 		this.resting = REST_TICKS;
 	    }
+	} else {
+	    this.attack = null;
+	    this.label = null;
 	}
+	if (!this.attacking) {
+	    this.lastPosition = this.position;
+	    this.doNextMove(map);
+	    this.doNextMove(map);
+	}
+
     }
 
     draw(scene) {
@@ -263,17 +272,19 @@ export class SolMob extends Mob {
     }
 
     get nextAttack() {
-	const isSpear = Math.random() < 0.5;
-
+	const isSpear = this.forceSpear || Math.random() < 0.5;
+	this.forceSpear = false;
 
 	if (this.lastPhaseHp <= this.nextPhaseHp) {
 	    this.nextPhaseHp = this.getNextPhaseHp();
+	    this.forceSpear = true;
 	    return this.getNextTransitionPhase();
 	}
 	
 	if (this.currentStats.hitpoint < SPECIAL_HP_LIMIT) {
 	    const r = Math.random();
 	    if (r < SPECIAL_FREQUENCY) {
+		this.forceSpear = true;
 		const isGrapple = Math.random() < 0.3;
 		if (isGrapple) {
 		    this.spear2 = false;
@@ -338,7 +349,6 @@ export class SolMob extends Mob {
 	const delta = vectors.subVec(target.position, this.position);
 
 	
-	//console.log(delta);
 
 
 	// stop once at mob border

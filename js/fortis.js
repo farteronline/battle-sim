@@ -131,7 +131,7 @@ class Scene {
 
 let scene = null;
 let map = null;
-let imgNames = ["map", "player", "sol", "melee"].map(x=>`./assets/${x}.png`)
+let imgNames = ["map", "player", "sol", "sol_spear", "sol_shield", "melee"].map(x=>`./assets/${x}.png`)
 let imagestore = null;
 let targetstore = null;
 let player = null;

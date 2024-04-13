@@ -35,10 +35,16 @@ export function label() {
 }
 
 export function damage(target, sol) {
+    if (sol.ticksToDamage == 1) {
+	sol.cur_img = "./assets/sol_spear.png";
+    } else {
+	sol.cur_img = "./assets/sol.png";
+    }
+
     if (!target || sol.ticksToDamage > 0) {
 	return;
     }
-    const p = target.position;
+    const p = target.lastPosition;
     if (isInside(p[0], p[1], sol.center)) {
 	normalDamage.damage(target);
     }

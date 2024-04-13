@@ -20,9 +20,11 @@ export class PlayerMob extends Mob {
 	super.setStats();
 	this.running = true;
 	this.attackCooldown = 0;
+	this.lastPosition = this.position;
     }
 
     nextTurn(map) {
+	this.lastPosition = this.position;
 	if (this.attackCooldown > 0) {
 	    --this.attackCooldown;
 	}
