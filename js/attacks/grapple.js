@@ -26,7 +26,6 @@ export class Grapple {
     
     damage(target, sol) {
 	const elapsed = ticksTaken(sol) - sol.ticksToDamage;
-	console.log(elapsed, sol.ticksToDamage);
 	if (sol.ticksToDamage == 1 && target.slotClicked != this.part) {
 	    this.isPerfect = true;
 	}
