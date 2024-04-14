@@ -41,8 +41,7 @@ let SHOW_LABEL = (function() {
 })();
 
 
-
-window.addEventListener("load", function() {
+function onLoadBinders () {
     document.getElementById("sound-check").checked = PLAY_SOUND;
     document.getElementById("label-check").checked = SHOW_LABEL;
     window.SHOW_LABEL = SHOW_LABEL;
@@ -57,7 +56,13 @@ window.addEventListener("load", function() {
 	window.SHOW_LABEL = SHOW_LABEL;
 	localStorage.setItem("label-check",JSON.stringify(SHOW_LABEL))
     };
-});
+}
+if (document.readyState === "complete") {
+    onLoadBinders();
+} else {
+    window.addEventListener("load", onLoadBinders);
+}
+
 
 export class SolMob extends Mob {
     
