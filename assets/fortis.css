@@ -33,6 +33,23 @@ img {
     height: 300px;
 }
 
+.inventory-tab{
+    float:left;
+    position:relative;
+    background: black;
+    width: 200px;
+    height: 300px;
+}
+
+.inventory-tab button{
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+    margin-top: -2px;
+    padding: 0px;
+    overflow:hidden;
+}
+
 .button-hands {
     position: absolute;
     top: 169px;

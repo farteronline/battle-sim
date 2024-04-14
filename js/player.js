@@ -16,11 +16,20 @@ export class PlayerMob extends Mob {
 	return imagestore.images["./assets/player.png"];
     }
 
+    startOfTick() {
+	super.startOfTick();
+	++this.tick;
+    }
+
     setStats () {
 	super.setStats();
 	this.running = true;
 	this.attackCooldown = 0;
 	this.lastPosition = this.position;
+	this.pot_brew = 0;
+	this.pot_combat = true;
+	this.tick = 0;
+	this.last_pot_tick = -3;
     }
 
     nextTurn(map) {
@@ -37,19 +46,37 @@ export class PlayerMob extends Mob {
 	}
     }
 
+    get maxHit() {
+	let brews = this.pot_brew;
+	if (brews > 4) {
+	    brews = 4;
+	}
+	if (!this.pot_combat) {
+	    brews += 1;
+	}
+	if (brews > 0) {
+	    let max = (WEAPON_MAX * (5 - brews) / 5) | 0;
+	    if (max < 0) {
+		return 0;
+	    }
+	    return max;
+	}
+	return WEAPON_MAX | 0;
+    }
+
     attack() {
 	if (this.attackCooldown <= 0) {
 	    this.attackCooldown = 4;
 	} else {
 	    return;
 	}
-	let dam = Math.floor(Math.random() * (WEAPON_MAX + 1));
+	let dam = Math.floor(Math.random() * (this.maxHit + 1));
 	if (Math.random() > WEAPON_ACCURACY) {
 	    dam = 0;
 	}
 	if (this.freeMax) {
 	    this.freeMax = false;
-	    dam = WEAPON_MAX;
+	    dam = this.maxHit;
 	}
 	this.target.damage(dam);
     }

@@ -4,6 +4,7 @@ let maps = import("./map.js");
 let sol = import("./sol.js");
 let playermob = import("./player.js");
 let armortab = import("./tabs/armor-tab.js");
+let inventorytab = import("./tabs/inventory-tab.js");
 let tc = import("./tickCounter.js");
 
 
@@ -155,6 +156,7 @@ async function main() {
     playermob = await playermob;
     tc = await tc;
     armortab = await armortab;
+    inventorytab = await inventorytab;
 
     imagestore = new ImageStore(imgNames);
     await imagestore.load();
@@ -179,6 +181,7 @@ async function main() {
     player = playerMob;
     solMob.target = playerMob;
     armortab.populate(document.getElementById("armor-tab"), playerMob);
+    inventorytab.populate(document.getElementById("inventory-tab"), playerMob);
 
     player.block(map);
     solMob.block(map);
