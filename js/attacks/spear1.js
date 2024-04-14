@@ -31,7 +31,11 @@ export function isInside(x, y, center) {
 }
 
 export function label() {
-    return "spear";
+    if (window.SHOW_LABEL) {
+	return "spear";
+    } else {
+	return "";
+    }
 }
 
 export function damage(target, sol) {

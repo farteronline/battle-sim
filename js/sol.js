@@ -32,12 +32,30 @@ var parry2_sound = new Howl({
     src: ['./assets/parry2.wav']
 });
 
+let SHOW_LABEL = (function() {
+    let label = localStorage.getItem("label-check");
+    if (label) {
+	return JSON.parse(label);
+    }
+    return true;
+})();
+
+
 
 window.addEventListener("load", function() {
     document.getElementById("sound-check").checked = PLAY_SOUND;
+    document.getElementById("label-check").checked = SHOW_LABEL;
+    window.SHOW_LABEL = SHOW_LABEL;
+    window.PLAY_SOUND = PLAY_SOUND;
     document.getElementById("sound-check").onchange = function() {
 	PLAY_SOUND = this.checked;
+	window.PLAY_SOUND = PLAY_SOUND;
 	localStorage.setItem("sound-check",JSON.stringify(PLAY_SOUND))
+    };
+    document.getElementById("label-check").onchange = function() {
+	SHOW_LABEL = this.checked;
+	window.SHOW_LABEL = SHOW_LABEL;
+	localStorage.setItem("label-check",JSON.stringify(SHOW_LABEL))
     };
 });
 
@@ -175,7 +193,11 @@ export class SolMob extends Mob {
 	}
 	
 	if (this.currentStats.hitpoint <= 0) {
-	    this.label = "Surprise, volatility";
+	    if (window.SHOW_LABEL) {
+		this.label = "Surprise, volatility";
+	    } else {
+		this.label = "";
+	    }
 	    return;
 	}
 	if (this.stunned > 0) {

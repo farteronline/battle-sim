@@ -87,7 +87,11 @@ export class Parry {
     }
     
     label() {
-	return "parry";
+	if (window.SHOW_LABEL) {
+	    return "parry";
+	} else {
+	    return "";
+	}
     }
 }
 

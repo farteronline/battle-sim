@@ -28,7 +28,11 @@ export function isInside(x, y, center) {
 }
 
 export function label() {
-    return "shield";
+    if (window.SHOW_LABEL) {
+	return "shield";
+    } else {
+	return "";
+    }
 }
 
 export function damage(target, sol) {
