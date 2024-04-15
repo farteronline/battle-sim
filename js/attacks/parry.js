@@ -82,6 +82,8 @@ export class Parry {
 		    target.damage(phase1Damage(sol.ticksToDamage, elapsed));
 		}
 		this.prayedBad = false;
+	    } else {
+		target.damage(0);
 	    }
 	    return;
 	}
