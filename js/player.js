@@ -74,7 +74,25 @@ export class PlayerMob extends Mob {
 	return window.PLAYER_ACCURACY || 0.7728;
     }
 
+    get inRange() {
+	if (!this.target) {
+	    return false;
+	}
+	const [x,y] = this.position;
+	const closest = this.target.getClosestTileTo(x, y);
+	const delta = vectors.subVec(closest, this.position);
+	const dx = Math.abs(delta[0]);
+	const dy = Math.abs(delta[1]);
+	return (dx == 1 || dy == 1) &&
+	    !(dx == 1 && dy == 1);
+    }
+
     attack() {
+	if (!this.inRange) {
+	    return;
+	}
+
+	
 	if (this.attackCooldown <= 0) {
 	    this.attackCooldown = this.weaponCooldown;
 	} else {
