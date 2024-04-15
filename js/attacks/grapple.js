@@ -26,6 +26,9 @@ export class Grapple {
     
     damage(target, sol) {
 	const elapsed = ticksTaken(sol) - sol.ticksToDamage;
+	if (elapsed == 1) {
+	    document.getElementById("chatbox").textContent = "";
+	}
 	if (sol.ticksToDamage == 1 && target.slotClicked != this.part) {
 	    this.isPerfect = true;
 	}
@@ -38,6 +41,7 @@ export class Grapple {
 	    normalDamage.damage(target);
 	} else if (this.isPerfect) {
 	    target.freeMax = true;
+	    document.getElementById("chatbox").textContent = "Perfect parry";
 	}
 	target.slotClicked = null;
     }

@@ -5,6 +5,12 @@
     margin-left: 8px;
 }
 
+.chatbox {
+    clear: both;
+    background: beige;
+    height: 2em;
+    width: 640px;
+}
 
 .buttons, .canvas {
     float: left;
