@@ -207,7 +207,7 @@ export class Mob {
 	if (this.prayer) {
 	    scene.ctx.drawImage(this.prayerImage,
 				(this.position[0]) * scene.tilesize,
-				(this.position[1]-this.size + 1) * scene.tilesize,
+				(this.position[1]-this.size) * scene.tilesize,
 				this.size * scene.tilesize,
 				this.size * scene.tilesize);
 	}
