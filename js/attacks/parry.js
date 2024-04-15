@@ -12,6 +12,8 @@ export class Parry {
 	this.beforeThirdHit = new Sprite(imagestore.images["./assets/parry.png"], 10, 10, 320, 279, 55, 82);
 	this.beforeThirdHitSlow = new Sprite(imagestore.images["./assets/parry.png"], 10, 10, 320, 279, 55, 82, 0.75);
 	this.postHit = new Sprite(imagestore.images["./assets/parry.png"], 10, 10, 320, 279, 83, 99);
+
+	this.moveDuringAttack = true;
     }
 
     

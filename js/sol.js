@@ -234,7 +234,7 @@ export class SolMob extends Mob {
 	    this.attack = null;
 	    this.label = null;
 	}
-	if (!this.attacking) {
+	if (!this.attacking || (this.attack && this.attack.moveDuringAttack)) {
 	    this.lastPosition = this.position;
 	    this.doNextMove(map);
 	    this.doNextMove(map);
