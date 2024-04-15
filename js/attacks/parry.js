@@ -76,7 +76,11 @@ export class Parry {
 	}
 	if (sol.ticksToDamage == 0 || elapsed == 4 || elapsed == 7) {
 	    if (this.prayedBad || target.prayer != "melee"){
-		normalDamage.damage(target);
+		if (ticksTook == 11) {
+		    target.damage(phase2Damage(sol.ticksToDamage, elapsed));
+		} else {
+		    target.damage(phase1Damage(sol.ticksToDamage, elapsed));
+		}
 		this.prayedBad = false;
 	    }
 	    return;
@@ -95,6 +99,26 @@ export class Parry {
 	    return "";
 	}
     }
+}
+
+function phase1Damage(ttd, elapsed) {
+    if (ttd == 0) {
+	return 35;
+    }
+    if (elapsed == 7) {
+	return 25;
+    }
+    return 15;
+}
+
+function phase2Damage(ttd, elapsed) {
+    if (ttd == 0) {
+	return 45;
+    }
+    if (elapsed == 7) {
+	return 30;
+    }
+    return 15;
 }
 
 export function ticksTaken(sol) {
