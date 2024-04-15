@@ -1,9 +1,16 @@
 export class TickCounter {
     constructor(ticks, c1, c2) {
-	this.ticks = ticks;
+	this._ticks = ticks;
 	this.t = 0;
 	this.c1 = c1;
 	this.c2 = c2;
+    }
+
+    get ticks() {
+	if (window.TICK_COUNT == 0) {
+	    return 1;
+	}
+	return window.TICK_COUNT || this._ticks;
     }
 
     tick() {

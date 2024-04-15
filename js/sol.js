@@ -40,10 +40,20 @@ let SHOW_LABEL = (function() {
     return true;
 })();
 
+let TICK_COUNT = (function() {
+    let label = localStorage.getItem("tick-counter");
+    if (label) {
+	return JSON.parse(label);
+    }
+    return 7;
+})();
+
 
 function onLoadBinders () {
     document.getElementById("sound-check").checked = PLAY_SOUND;
     document.getElementById("label-check").checked = SHOW_LABEL;
+    document.getElementById("tick-counter").value = TICK_COUNT;
+    window.TICK_COUNT = TICK_COUNT;
     window.SHOW_LABEL = SHOW_LABEL;
     window.PLAY_SOUND = PLAY_SOUND;
     document.getElementById("sound-check").onchange = function() {
@@ -55,6 +65,11 @@ function onLoadBinders () {
 	SHOW_LABEL = this.checked;
 	window.SHOW_LABEL = SHOW_LABEL;
 	localStorage.setItem("label-check",JSON.stringify(SHOW_LABEL))
+    };
+    document.getElementById("tick-counter").onchange = function() {
+	TICK_COUNT = this.value || 7;
+	window.TICK_COUNT = TICK_COUNT;
+	localStorage.setItem("tick-counter",JSON.stringify(TICK_COUNT))
     };
 }
 if (document.readyState === "complete") {
