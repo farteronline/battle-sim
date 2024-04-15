@@ -48,7 +48,7 @@ export function damage(target, sol) {
     if (!target || sol.ticksToDamage > 0) {
 	return;
     }
-    const p = target.lastPosition;
+    const p = target.position;
     if (isInside(p[0], p[1], sol.center)) {
 	normalDamage.damage(target);
     }

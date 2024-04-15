@@ -231,7 +231,7 @@ export class SolMob extends Mob {
 
 
     get center() {
-	return [this.lastPosition[0] + 2, this.lastPosition[1] - 2];
+	return [this.position[0] + 2, this.position[1] - 2];
     }
 
     tileIndex(tile) {
@@ -292,7 +292,14 @@ export class SolMob extends Mob {
 		this.spawnANewTile();
 	    }
 	}
-
+	
+	if (!this.attacking || (this.attack && this.attack.moveDuringAttack)) {
+	    this.lastPosition = this.position;
+	    if (!this.isTargetInside) {
+		this.doNextMove(map);
+	    }
+	    this.doNextMove(map);
+	}
 	if (this.attacking) {
 	    --this.ticksToDamage;
 	    this.attack.damage(this.target, this);
@@ -303,13 +310,6 @@ export class SolMob extends Mob {
 	} else {
 	    this.attack = null;
 	    this.label = null;
-	}
-	if (!this.attacking || (this.attack && this.attack.moveDuringAttack)) {
-	    this.lastPosition = this.position;
-	    if (!this.isTargetInside) {
-		this.doNextMove(map);
-	    }
-	    this.doNextMove(map);
 	}
 
     }

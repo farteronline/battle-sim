@@ -211,12 +211,11 @@ function mainLoop(){
 	const monsters = [solMob];
 	monsters.map(x=>x.startOfTick());
 	player.startOfTick();
-	let stillGoing = false;
-	player.nextTurn(map);
+
 
 	const didMove = monsters.map(x=>x.nextTurn(map));
 	const didMoveAny = didMove.indexOf(true) != -1;
-	stillGoing = stillGoing || didMoveAny;
+	player.nextTurn(map);
     }
 
     scene.drawAll(currentAnimationFrame);
