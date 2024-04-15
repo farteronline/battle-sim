@@ -256,15 +256,35 @@ canvas.onclick = function(event) {
 
     const x = (thisX) / scene.tilesize | 0;
     const y = (thisY) / scene.tilesize | 0;
-    
+
+    player.running = !doWalk;
     player.target = getTargetAtPos([x,y]);
 }
+
+let shiftPressed = false;
+let doWalk = false;
+function keyPress(value) {
+    return function (e) {
+	if (e.keyCode == 16) {
+	    shiftPressed = value;
+	}
+	if (e.keyCode == 17) {
+	    doWalk = value;
+	}
+    }
+}
+
+document.addEventListener("keydown", keyPress(true));
+document.addEventListener("keyup", keyPress(false));
 
 function getTargetAtPos(position) {
     const result = [solMob].find(mob=>{
 	const found = mob.getClosestTileTo(position[0], position[1]);
 	return found[0] == position[0] && found[1] == position[1];
     });
+    if (shiftPressed) {
+	return {position, type: 3};
+    }
     return result || {position, type: 3}
 }
 

@@ -181,6 +181,16 @@ export class SolMob extends Mob {
 	return 0;
     }
 
+    get isTargetInside() {
+	if (!this.target) {
+	    return false;
+	}
+	const [x,y] = this.target.position;
+	const closest = this.getClosestTileTo(x, y);
+	const delta = vectors.subVec(closest, this.target.position);
+	return delta[0] == 0 && delta[1] == 0;
+    }
+
     initMap(map) {
 	this.map = map;
 	this.tileMap = {};
@@ -296,7 +306,9 @@ export class SolMob extends Mob {
 	}
 	if (!this.attacking || (this.attack && this.attack.moveDuringAttack)) {
 	    this.lastPosition = this.position;
-	    this.doNextMove(map);
+	    if (!this.isTargetInside) {
+		this.doNextMove(map);
+	    }
 	    this.doNextMove(map);
 	}
 
