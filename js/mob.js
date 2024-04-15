@@ -234,7 +234,7 @@ export class Mob {
 
     drawDamage(scene) {
 	if(this.damageTaken != null) {
-	    const position = [this.position[0] + this.size/2 - 0.5, this.position[1] + 0.75];
+	    const position = [this.position[0] + this.size/2 - 0.5, this.position[1] + 1.25 - this.size/2];
 	    
 	    const center = vectors.mulVec(position, scene.tilesize);
 	    const ctx = scene.ctx;
