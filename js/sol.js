@@ -389,7 +389,6 @@ export class SolMob extends Mob {
 	if (this.currentStats.hitpoint < SPECIAL_HP_LIMIT) {
 	    const r = Math.random();
 	    if (r < SPECIAL_FREQUENCY) {
-		this.forceSpear = true;
 		const isGrapple = Math.random() < 0.3;
 		if (isGrapple) {
 		    this.spear2 = false;
