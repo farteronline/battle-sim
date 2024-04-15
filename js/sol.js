@@ -48,11 +48,41 @@ let TICK_COUNT = (function() {
     return 7;
 })();
 
+let PLAYER_MAX = (function() {
+    let label = localStorage.getItem("max-hit");
+    if (label) {
+	return JSON.parse(label);
+    }
+    return 49;
+})();
+
+let PLAYER_ACCURACY = (function() {
+    let label = localStorage.getItem("accuracy");
+    if (label) {
+	return JSON.parse(label);
+    }
+    return 0.7728;
+})();
+
+let WEAPON_SPEED = (function() {
+    let label = localStorage.getItem("weapon-speed");
+    if (label) {
+	return JSON.parse(label);
+    }
+    return 4;
+})();
+
 
 function onLoadBinders () {
     document.getElementById("sound-check").checked = PLAY_SOUND;
     document.getElementById("label-check").checked = SHOW_LABEL;
     document.getElementById("tick-counter").value = TICK_COUNT;
+    document.getElementById("max-hit").value = PLAYER_MAX;
+    document.getElementById("accuracy").value = PLAYER_ACCURACY;
+    document.getElementById("weapon-speed").value = WEAPON_SPEED;
+    window.WEAPON_SPEED = WEAPON_SPEED;
+    window.PLAYER_MAX = PLAYER_MAX;
+    window.PLAYER_ACCURACY = PLAYER_ACCURACY;
     window.TICK_COUNT = TICK_COUNT;
     window.SHOW_LABEL = SHOW_LABEL;
     window.PLAY_SOUND = PLAY_SOUND;
@@ -67,9 +97,24 @@ function onLoadBinders () {
 	localStorage.setItem("label-check",JSON.stringify(SHOW_LABEL))
     };
     document.getElementById("tick-counter").onchange = function() {
-	TICK_COUNT = (this.value | 0) || 7;
+	TICK_COUNT = ((this.value < 0 ? 0 : this.value) | 0) || 7;
 	window.TICK_COUNT = TICK_COUNT;
 	localStorage.setItem("tick-counter",JSON.stringify(TICK_COUNT))
+    };
+    document.getElementById("max-hit").onchange = function() {
+	PLAYER_MAX = ((this.value < 0 ? 0 : this.value) | 0) || 49;
+	window.PLAYER_MAX = PLAYER_MAX;
+	localStorage.setItem("max-hit",JSON.stringify(PLAYER_MAX))
+    };
+    document.getElementById("weapon-speed").onchange = function() {
+	WEAPON_SPEED = ((this.value < 0 ? 0 : this.value) | 0) || 4;
+	window.WEAPON_SPEED = WEAPON_SPEED;
+	localStorage.setItem("weapon-speed",JSON.stringify(WEAPON_SPEED))
+    };
+    document.getElementById("accuracy").onchange = function() {
+	PLAYER_ACCURACY = (this.value < 0 ? 0 : this.value - 0) || 0.7728;
+	window.PLAYER_ACCURACY = PLAYER_ACCURACY;
+	localStorage.setItem("accuracy",JSON.stringify(PLAYER_ACCURACY))
     };
 }
 if (document.readyState === "complete") {

@@ -4,8 +4,6 @@ import * as vectors from "./vector-stuff.js";
 import {clamp} from "./vector-stuff.js";
 
 var WEAPON_COOLDOWN = 4;
-var WEAPON_MAX = 49;
-var WEAPON_ACCURACY = 0.7728;
 
 export class PlayerMob extends Mob {
 
@@ -46,7 +44,15 @@ export class PlayerMob extends Mob {
 	}
     }
 
+    get weaponCooldown () {
+	if (window.WEAPON_SPEED <= 0) {
+	    return 1;
+	}
+	return window.WEAPON_SPEED || WEAPON_COOLDOWN;
+    }
+
     get maxHit() {
+	const WEAPON_MAX = window.PLAYER_MAX || 49;
 	let brews = this.pot_brew;
 	if (brews > 4) {
 	    brews = 4;
@@ -64,14 +70,18 @@ export class PlayerMob extends Mob {
 	return WEAPON_MAX | 0;
     }
 
+    get accuracy () {
+	return window.PLAYER_ACCURACY || 0.7728;
+    }
+
     attack() {
 	if (this.attackCooldown <= 0) {
-	    this.attackCooldown = 4;
+	    this.attackCooldown = this.weaponCooldown;
 	} else {
 	    return;
 	}
 	let dam = Math.floor(Math.random() * (this.maxHit + 1));
-	if (Math.random() > WEAPON_ACCURACY) {
+	if (Math.random() > this.accuracy) {
 	    dam = 0;
 	}
 	if (this.freeMax) {
