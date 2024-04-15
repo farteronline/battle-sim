@@ -160,23 +160,23 @@ async function main() {
 
     imagestore = new ImageStore(imgNames);
     await imagestore.load();
-    map = new maps.Map(21, 21);
-    scene = new Scene(map, 21, 21, 32, "./assets/map.png", "canvas");
+    map = new maps.Map(20, 20);
+    scene = new Scene(map, 20, 20, 32, "./assets/map.png", "canvas");
     tickCounter = new tc.TickCounter(7, "white","#479aed");
 
     map.scene = scene;
 
-    blockMapRect(map, 0,0,3,21);
-    blockMapRect(map, 0,0,21,3);
-    blockMapRect(map, 18,0,3,21);
-    blockMapRect(map, 0,18,21,3);
+    blockMapRect(map, 0,0,3,20);
+    blockMapRect(map, 0,0,20,3);
+    blockMapRect(map, 17,0,3,20);
+    blockMapRect(map, 0,17,20,3);
     map.setBlocking(3,3, maps.BLOCK_WALL);
-    map.setBlocking(17,3, maps.BLOCK_WALL);
-    map.setBlocking(3,17, maps.BLOCK_WALL);
-    map.setBlocking(17,17, maps.BLOCK_WALL);
+    map.setBlocking(16,3, maps.BLOCK_WALL);
+    map.setBlocking(3,16, maps.BLOCK_WALL);
+    map.setBlocking(16,16, maps.BLOCK_WALL);
 
     solMob = new sol.SolMob([8,8]);
-    const playerMob = new playermob.PlayerMob([10,10]);
+    const playerMob = new playermob.PlayerMob([10,13]);
 
     player = playerMob;
     solMob.target = playerMob;
