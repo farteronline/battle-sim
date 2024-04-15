@@ -67,7 +67,7 @@ function onLoadBinders () {
 	localStorage.setItem("label-check",JSON.stringify(SHOW_LABEL))
     };
     document.getElementById("tick-counter").onchange = function() {
-	TICK_COUNT = this.value || 7;
+	TICK_COUNT = (this.value | 0) || 7;
 	window.TICK_COUNT = TICK_COUNT;
 	localStorage.setItem("tick-counter",JSON.stringify(TICK_COUNT))
     };
