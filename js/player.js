@@ -2,6 +2,7 @@ import {Mob} from "./mob.js";
 import {UnitTypes} from "./Units.js";
 import * as vectors from "./vector-stuff.js";
 import {clamp} from "./vector-stuff.js";
+import {BLOCK_WALL} from "./map.js";
 
 var WEAPON_COOLDOWN = 4;
 
@@ -30,16 +31,66 @@ export class PlayerMob extends Mob {
 	this.last_pot_tick = -3;
     }
 
+    getClosestPointNotInsideTarget(map) {
+	if (!this.target) {
+	    return this.position;
+	}
+	const thisPosition = this.position;
+	const [px, py] = this.position;
+	const [tx, ty] = this.target.position;
+	const size = this.target.size;
+	const eastPos = [(tx - 1), py];
+	const westPos = [(tx + size), py];
+	const northPos = [px, (ty - size)];
+	const southPos = [px, (ty + 1)];
+	// only need to do 4 tiles because of arena shape
+	const possibleTiles = [
+	    eastPos,
+	    westPos,
+	    northPos,
+	    southPos,
+	].map(position=>{
+	    return {position,
+		    dist: vectors.manhattenDist(position, thisPosition)};
+	}).sort((x,y)=>x.dist > y.dist);
+
+	for(let tile of possibleTiles) {
+	    let [x, y] = tile.position;
+	    if (map.getBlocking(x, y) != BLOCK_WALL) {
+		return tile.position;
+	    }
+	}
+    
+	return this.position;
+    }
+    
+    get isInsideTarget() {
+	if (!this.target || !this.target.getClosestTileTo) {
+	    return false;
+	}
+	const [x,y] = this.position;
+	const closest = this.target.getClosestTileTo(x, y);
+	const delta = vectors.subVec(closest, this.position);
+	return delta[0] == 0 && delta[1] == 0;
+    }
+
     nextTurn(map) {
 	this.lastPosition = this.position;
 	if (this.attackCooldown > 0) {
 	    --this.attackCooldown;
 	}
+	const insideTarget = this.isInsideTarget;
+	let tempTarget = this.target;
+	if (insideTarget) {
+	    this.target = {position: this.getClosestPointNotInsideTarget(map), type: UnitTypes.MOVETO};
+	}
 	if (this.running) {
 	    this.doNextMove(map);
 	}
 	this.doNextMove(map);
+	this.target = tempTarget;
 	if (this.target && this.target.type == UnitTypes.MOB) {
+	    
 	    this.attack();
 	}
     }
