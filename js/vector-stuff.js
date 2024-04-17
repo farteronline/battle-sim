@@ -44,6 +44,10 @@ export function manhattenDist(A,B) {
     return Math.max(dx, dy);
 }
 
+export function absVec(A) {
+    return [Math.abs(A[0]), Math.abs(A[1])];
+}
+
 export function lenVec(A,B) {
     let dx = (A[0] - B[0]);
     let dy = (A[1] - B[1]);

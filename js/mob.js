@@ -285,18 +285,18 @@ export class Mob {
 	return true;
     }
 
-    targetDirection(target) {
+    targetDirection(targetPos, closest) {
 	let x = 0;
-	if (target.position[0] > this.position[0]) {
+	if (targetPos[0] > closest[0]) {
 	    x = 1;
-	} else if (target.position[0] < this.position[0]){
+	} else if (targetPos[0] < closest[0]){
 	    x = -1;
 	}
 
 	let y = 0;
-	if (target.position[1] > this.position[1]) {
+	if (targetPos[1] > closest[1]) {
 	    y = 1;
-	} else if (target.position[1] < this.position[1]){
+	} else if (targetPos[1] < closest[1]){
 	    y = -1;
 	}
 	return [x, y];
@@ -427,10 +427,13 @@ export class Mob {
 	    return null;
 	}
 	const target = this.target;
-	const td = this.targetDirection(target);
-	const delta = vectors.subVec(target.position, this.position);
+	const closest = this.getClosestTileTo(tx, ty);
+	const td = this.targetDirection(this.target.position, closest);
+	const tx = this.target.position[0];
+	const ty = this.target.position[1];
+	const delta = vectors.subVec(target.position, closest);
+	const closestAbsolute = vectors.absVec(delta);
 
-	//console.log(delta);
 
 
 	// stop once at mob border
@@ -465,7 +468,8 @@ export class Mob {
 	    }
 	}
 
-	if (moveX && moveY) {
+	const isDirectlyDiagonal = closestAbsolute[0] == closestAbsolute[1];
+	if (moveX && moveY && isDirectlyDiagonal) {
 	    const moveXY = this.nextMoveXY(map, td);
 	    if (moveXY) {
 		return moveXY;

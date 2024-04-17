@@ -160,24 +160,24 @@ export class PlayerMob extends Mob {
     get type() {
 	return UnitTypes.PLAYER;
     }
-
+    
     nextMove(map) {
 	if(!this.target) {
 	    return null;
 	}
 	const target = this.target;
-	const td = this.targetDirection(target);
-	const delta = vectors.subVec(target.position, this.position);
-
-	const inXBound = delta[0] <= 0 && delta[0] > -target.size;
-	const inYBound = delta[1] < target.size && delta[1] >= 0;
-	//console.log(delta, inXBound, inYBound);
-
+	const closest = this.target.getClosestTileTo != null ? this.target.getClosestTileTo(
+	    this.position[0], this.position[1]) : this.target.position;
+	const td = this.targetDirection(closest, this.position);
+	const delta = vectors.subVec(closest, this.position);
+	const closestAbsolute = vectors.absVec(delta);
+	const inXBound = delta[0] == 0;
+	const inYBound = delta[1] == 0;
 
 	// stop once at mob border
 	if (this.target.type != UnitTypes.MOVETO) {
 	    if (inXBound
-		&& delta[1] == target.size) {
+		&& delta[1] == 1) {
 		return null;
 	    }
 	    if (inXBound
@@ -185,7 +185,7 @@ export class PlayerMob extends Mob {
 		return null;
 	    }
 	    if (inYBound
-		&& delta[0] == -target.size) {
+		&& delta[0] == -1) {
 		return null;
 	    }
 	    if (inYBound
@@ -208,7 +208,6 @@ export class PlayerMob extends Mob {
 
 	// if player is within borders of target size
 	// dont move diagonally
-	//console.log(target.size, delta);
 	if (target.size) {
 	    if (inXBound) {
 		return moveY;
@@ -219,7 +218,15 @@ export class PlayerMob extends Mob {
 	}
 
 
-	if (moveX && moveY) {
+	const isDirectlyDiagonal = closestAbsolute[0] == closestAbsolute[1];
+	if (!isDirectlyDiagonal) {
+	    if (closestAbsolute[0] > closestAbsolute[1]) {
+		return moveX  || null;
+	    } else if (closestAbsolute[1] > closestAbsolute[0]) {
+		return moveY || null;
+	    }
+	}
+	if (moveX && moveY && isDirectlyDiagonal) {
 	    const moveXY = this.nextMoveXY(map, td);
 	    if (moveXY) {
 		return moveXY;

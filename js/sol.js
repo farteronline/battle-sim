@@ -196,7 +196,6 @@ export class SolMob extends Mob {
 	}
 	const dx = Math.abs(delta[0]);
 	const dy = Math.abs(delta[1]);
-	console.log(delta);
 	return (dx == 1 && dy == 0) ||
 	    (dx == 0 && dy == 1) ||
 	    (dx == 1 && dy == 1) ||
@@ -486,7 +485,7 @@ export class SolMob extends Mob {
 	    return null;
 	}
 	const target = this.target;
-	const td = this.targetDirection(target);
+	const td = this.targetDirection(this.target.position, this.position);
 	const delta = vectors.subVec(target.position, this.position);
 
 	
