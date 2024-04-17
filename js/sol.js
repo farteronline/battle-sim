@@ -17,7 +17,6 @@ import {pickRandIndex} from "./randoms.js";
 
 var SPECIAL_FREQUENCY = 0.2;
 var SPECIAL_HP_LIMIT = 1350;
-var REST_TICKS = 4;
 var PLAY_SOUND = JSON.parse(localStorage.getItem("sound-check"));
 var spear_sound = new Howl({
     src: ['./assets/spear.wav']
@@ -132,12 +131,12 @@ export class SolMob extends Mob {
 
     setStats () {
 	super.setStats();
-	this.resting = REST_TICKS;
+	this.resting = 4;
 	this.attacking = false;
 	this.spear2 = false;
 	this.shield2 = false;
 	this.label = null;
-	this.stunned = 2;
+	this.stunned = 3;
 	this.stats = {
 	    attack: 99,
 	    strength: 99,
@@ -305,7 +304,7 @@ export class SolMob extends Mob {
 	    this.attack.damage(this.target, this);
 	    if(this.ticksToDamage == 0) {
 		this.attacking = false;
-		this.resting = REST_TICKS;
+		this.resting = this.attack.delayNextAttackBy(this);
 	    }
 	} else {
 	    this.attack = null;
@@ -369,7 +368,6 @@ export class SolMob extends Mob {
 	}
 	if (hp > 750) {
 	    this.phase = 3;
-	    REST_TICKS = 3;
 	    return new PhaseTransition("Phase 3: handle this", sol);
 	}
 	if (hp > 400) {

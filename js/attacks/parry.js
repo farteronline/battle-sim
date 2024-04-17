@@ -101,6 +101,15 @@ export class Parry {
 	    return "";
 	}
     }
+    
+    delayNextAttackBy(sol) {
+	if (sol.phase >= 4) {
+	    return 2;
+	} else {
+	    return 3;
+	}
+    }
+
 }
 
 function phase1Damage(ttd, elapsed) {

@@ -49,8 +49,13 @@ export class Grapple {
     label() {
 	return this.part;
     }
+
+    delayNextAttackBy(sol) {
+	return 4;
+    }
 }
 
 export function ticksTaken(sol) {
     return 4;
 }
+
