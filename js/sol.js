@@ -180,13 +180,33 @@ export class SolMob extends Mob {
 	return 0;
     }
 
-    get isTargetInside() {
+    getTargetDelta() {
 	if (!this.target) {
-	    return false;
+	    return null;
 	}
 	const [x,y] = this.target.position;
 	const closest = this.getClosestTileTo(x, y);
-	const delta = vectors.subVec(closest, this.target.position);
+	return vectors.subVec(closest, this.target.position);
+    }
+
+    
+    isTargetInMeleeDistance(delta) {
+	if (delta == null) {
+	    return false;
+	}
+	const dx = Math.abs(delta[0]);
+	const dy = Math.abs(delta[1]);
+	console.log(delta);
+	return (dx == 1 && dy == 0) ||
+	    (dx == 0 && dy == 1) ||
+	    (dx == 1 && dy == 1) ||
+	    (dx == 0 && dy == 0);
+    }
+
+    isTargetInside(delta) {
+	if (delta == null) {
+	    return false;
+	}
 	return delta[0] == 0 && delta[1] == 0;
     }
 
@@ -265,6 +285,10 @@ export class SolMob extends Mob {
 	if (this.isInBadTile(this.target.position)) {
 	    this.target.damage(Math.floor(Math.random() * 11));
 	}
+
+	const targetDelta = this.getTargetDelta();
+	const targetInside = this.isTargetInside(targetDelta);
+	const isInMeleeDistance = this.isTargetInMeleeDistance(targetDelta);
 	
 	if (this.currentStats.hitpoint <= 0) {
 	    if (window.SHOW_LABEL) {
@@ -278,7 +302,10 @@ export class SolMob extends Mob {
 	    --this.stunned;
 	    return;
 	}
-	if (!this.attacking && --this.resting == 0) {
+	if (this.resting <= 0) {
+	    this.resting = 1;
+	}
+	if (!this.attacking && --this.resting == 0 && isInMeleeDistance) {
 	    this.attacking = true;
 	    this.ticksToDamage = 4;
 	    this.attack = this.nextAttack;
@@ -294,7 +321,7 @@ export class SolMob extends Mob {
 	
 	if (!this.attacking || (this.attack && this.attack.moveDuringAttack)) {
 	    this.lastPosition = this.position;
-	    if (!this.isTargetInside) {
+	    if (!targetInside) {
 		this.doNextMove(map);
 	    }
 	    this.doNextMove(map);
