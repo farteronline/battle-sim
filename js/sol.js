@@ -131,12 +131,12 @@ export class SolMob extends Mob {
 
     setStats () {
 	super.setStats();
-	this.resting = 2;
+	this.resting = 1;
 	this.attacking = false;
 	this.spear2 = false;
 	this.shield2 = false;
 	this.label = null;
-	this.stunned = 3;
+	this.stunned = 4;
 	this.stats = {
 	    attack: 99,
 	    strength: 99,
