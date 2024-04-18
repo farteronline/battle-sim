@@ -8,6 +8,46 @@ let inventorytab = import("./tabs/inventory-tab.js");
 let tc = import("./tickCounter.js");
 
 
+window.TICK_MODE = (function() {
+    let label = localStorage.getItem("tick-mode");
+    if (label) {
+	return JSON.parse(label);
+    }
+    return false;
+})();
+let currentlyRunning = true;
+function advanceTick() {
+    if (!currentlyRunning) {
+	currentlyRunning = true;
+	mainLoop();
+    }
+}
+
+function onFortisLoadBinders () {
+    document.getElementById("tick-mode").checked = window.TICK_MODE;
+    document.getElementById("tick-mode-controls").style.visibility = window.TICK_MODE ? "visible" : "hidden";
+    document.getElementById("advance-tick").addEventListener("click", advanceTick);
+    
+    document.getElementById("tick-mode").onchange = function() {
+	window.TICK_MODE = this.checked;
+	document.getElementById("tick-mode-controls").style.visibility = window.TICK_MODE ? "visible" : "hidden";
+	localStorage.setItem("tick-mode",JSON.stringify(window.TICK_MODE));
+	if (!window.TICK_MODE) {
+	    currentlyRunning = true;
+	    setTimeout(mainLoop, 600);
+	    currentAnimationFrame = 0;
+	}
+    };
+}
+
+if (document.readyState === "complete") {
+    onFortisLoadBinders();
+} else {
+    window.addEventListener("load", onFortisLoadBinders);
+}
+
+
+
 const colors = ["#FF0000", "#00A08A", "#F2AD00", "#F98400", "#5BBCD6"];
 class ImageStore {
     constructor(images) {
@@ -205,7 +245,7 @@ let framesPerTick = 9;
 const animated = true;
 
 function mainLoop(){
-
+    currentlyRunning = true;
     if (currentAnimationFrame % framesPerTick == 0) {
 	tickCounter.tick();
 	const monsters = [solMob];
@@ -220,12 +260,17 @@ function mainLoop(){
 
     scene.drawAll(currentAnimationFrame);
 
-    if (animated) {
-	currentAnimationFrame += 1;
-	setTimeout(mainLoop, 60);
+    if (!window.TICK_MODE) {
+	if (animated) {
+	    currentAnimationFrame += 1;
+	    setTimeout(mainLoop, 60);
+	} else {
+	    currentAnimationFrame += framesPerTick;
+	    setTimeout(mainLoop, 600);
+	}
     } else {
-	currentAnimationFrame += framesPerTick;
-	setTimeout(mainLoop, 600);
+	currentAnimationFrame = 0;
+	currentlyRunning = false;
     }
 
 }
