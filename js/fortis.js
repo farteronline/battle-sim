@@ -15,12 +15,25 @@ window.TICK_MODE = (function() {
     }
     return false;
 })();
-let currentlyRunning = true;
+
+let currentlyRunning = false;
 function advanceTick() {
     if (!currentlyRunning) {
 	currentlyRunning = true;
 	mainLoop();
     }
+}
+
+function drawText(ctx, center, text) {
+    const strokeColor = ctx.strokeStyle;
+    const lineWidth = ctx.lineWidth;
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 3;
+    ctx.strokeText(text, center[0], center[1]);
+    ctx.fillText(text, center[0], center[1]);
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = lineWidth;
 }
 
 function onFortisLoadBinders () {
@@ -90,6 +103,10 @@ class Scene {
 	this.drawables = [];
 
 	this.smoothIt();
+    }
+
+    get center() {
+	return [this.width/2 * this.tilesize, this.height/2 * this.tilesize];
     }
 
     get canvasWidth() {
@@ -190,7 +207,7 @@ function blockMapRect(map, x,y,w,h) {
 let tickCounter = null;
 async function main() {
     randoms = (await randoms);
-    vectors = await window.vectors;
+    vectors = await vectors;
     maps = await maps;
     sol = await sol;
     playermob = await playermob;
@@ -234,8 +251,8 @@ async function main() {
 
     
     scene.drawAll();
-
-    setTimeout(mainLoop, 600);
+    
+    drawText(scene.ctx, vectors.addVec([-30, 0], scene.center), "PAUSED");
 }
 
 
@@ -276,6 +293,10 @@ function mainLoop(){
 }
 
 canvas.onclick = function(event) {
+    const needsToRun = !currentlyRunning;
+    if (!window.TICK_MODE) {
+	currentlyRunning = true;
+    }
 	var eventDoc, doc, body;
     var rect = this.getBoundingClientRect()
 	event = event || window.event; // IE-ism
@@ -303,6 +324,10 @@ canvas.onclick = function(event) {
 
     player.running = !doWalk;
     player.target = getTargetAtPos([x,y]);
+
+    if (needsToRun && !window.TICK_MODE) {
+	setTimeout(mainLoop, 600);
+    }
 }
 
 let shiftPressed = false;
