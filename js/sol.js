@@ -419,7 +419,9 @@ export class SolMob extends Mob {
 	if (this.lastPhaseHp <= this.nextPhaseHp) {
 	    this.nextPhaseHp = this.getNextPhaseHp();
 	    this.forceSpear = true;
-	    return this.getNextTransitionPhase();
+	    const nextPhase = this.getNextTransitionPhase();
+	    this.ticksToDamage = nextPhase.ticksTaken(sol);
+	    return nextPhase;
 	}
 	
 	if (this.currentStats.hitpoint < SPECIAL_HP_LIMIT) {

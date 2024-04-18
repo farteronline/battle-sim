@@ -27,17 +27,17 @@ export class PhaseTransition {
     }
 
     damage(target, sol){
-	if (sol.ticksToDamage != 0) {
+	if (sol.ticksToDamage != 2) {
 	    return;
 	}
 	this.spawnTiles(sol);
     }
     
     ticksTaken(sol) {
-	return 3;
+	return 5;
     }
 
     delayNextAttackBy(sol) {
-	return 2;
+	return 3;
     }
 }
