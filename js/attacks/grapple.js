@@ -29,10 +29,10 @@ export class Grapple {
 	if (elapsed == 1) {
 	    document.getElementById("chatbox").textContent = "";
 	}
-	if (sol.ticksToDamage == 1 && target.slotClicked != this.part) {
+	if (sol.ticksToDamage == 2 && target.slotClicked != this.part) {
 	    this.isPerfect = true;
 	}
-	if (sol.ticksToDamage != 0) {
+	if (sol.ticksToDamage != 1) {
 	    return;
 	}
 
@@ -51,7 +51,7 @@ export class Grapple {
     }
 
     delayNextAttackBy(sol) {
-	return 4;
+	return 3;
     }
 }
 
