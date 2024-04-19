@@ -103,7 +103,7 @@ export class Parry {
     }
     
     delayNextAttackBy(sol) {
-	if (sol.phase >= 4) {
+	if (sol.phase >= 3) {
 	    return 2;
 	} else {
 	    return 3;
