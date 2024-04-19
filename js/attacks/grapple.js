@@ -56,6 +56,6 @@ export class Grapple {
 }
 
 export function ticksTaken(sol) {
-    return 4;
+    return 5;
 }
 
