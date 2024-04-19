@@ -17,6 +17,7 @@ import {pickRandIndex} from "./randoms.js";
 
 var SPECIAL_FREQUENCY = 0.2;
 var SPECIAL_HP_LIMIT = 1350;
+var MAX_SOL_HP = 1500;
 var PLAY_SOUND = JSON.parse(localStorage.getItem("sound-check"));
 var spear_sound = new Howl({
     src: ['./assets/spear.wav']
@@ -148,7 +149,7 @@ export class SolMob extends Mob {
 	this.currentStats = {...this.stats};
 	this.phase = 1;
 	this.ticksToNewTile = 3;
-	this.lastPhaseHp = this.currentStats.hitpoint;
+	this.lastPhaseHp = this.currentStats.hitpoint/MAX_SOL_HP;
 	this.nextPhaseHp = this.getNextPhaseHp();
 	this.forceSpear = true;
 	this.cur_img = "./assets/sol.png";
@@ -157,25 +158,25 @@ export class SolMob extends Mob {
 
     startOfTick() {
 	super.startOfTick();
-	this.lastPhaseHp = this.currentStats.hitpoint;
+	this.lastPhaseHp = this.currentStats.hitpoint/MAX_SOL_HP;
     }
 
     getNextPhaseHp() {
 	const hp = this.lastPhaseHp;
-	if (hp > 1350) {
-	    return 1350;
+	if (hp > 0.9) {
+	    return 0.9;
 	}
-	if (hp > 1100) {
-	    return 1100;
+	if (hp > 0.75) {
+	    return 0.75;
 	}
-	if (hp > 750) {
-	    return 750;
+	if (hp > 0.5) {
+	    return 0.5;
 	}
-	if (hp > 400) {
-	    return 400;
+	if (hp > 0.25) {
+	    return 0.25;
 	}
-	if (hp > 150) {
-	    return 150;
+	if (hp > 0.1) {
+	    return 0.1;
 	}
 	return 0;
     }
@@ -388,19 +389,19 @@ export class SolMob extends Mob {
     getNextTransitionPhase() {
 	const hp = this.lastPhaseHp;
 	const sol = this;
-	if (hp > 1100) {
+	if (hp > 0.75) {
 	    this.phase = 2;
 	    return new PhaseTransition("Phase 2: something else", sol);
 	}
-	if (hp > 750) {
+	if (hp > 0.5) {
 	    this.phase = 3;
 	    return new PhaseTransition("Phase 3: handle this", sol);
 	}
-	if (hp > 400) {
+	if (hp > 0.25) {
 	    this.phase = 4;
 	    return new PhaseTransition("Phase 4: can't win", sol);
 	}
-	if (hp > 150) {
+	if (hp > 0.1) {
 	    this.phase = 5;
 	    return new PhaseTransition("Phase 5: guided hand", sol);
 	}
